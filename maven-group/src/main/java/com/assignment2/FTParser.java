@@ -7,14 +7,11 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class FTParser {
 
-	// private static final String ftDirectory = "./Assignment Two/Assignment Two/ft";
+    public static final String FT_PATH = "Assignment Two/Assignment Two/ft/";
 	private static ArrayList<File> fileList;
 
 	//All of the different fields are stored here
@@ -26,9 +23,9 @@ public class FTParser {
 	public static ArrayList<String> Publications;
 	public static ArrayList<String> PageNumbers;
 	
-	FTParser(URL path) throws MalformedURLException, URISyntaxException {
+	FTParser() {
 		System.out.println("Working Directory = " + System.getProperty("user.dir"));
-		fileList = walkFileTreeExample(path);
+		fileList = walkFileTreeExample(FT_PATH);
 		
 		DocNums = new ArrayList<String>();
 		Dates = new ArrayList<String>();
@@ -53,14 +50,14 @@ public class FTParser {
 		}
 	}
 	
-	private ArrayList<File> walkFileTreeExample(URL dirName) throws MalformedURLException, URISyntaxException {
+	private ArrayList<File> walkFileTreeExample(String dirName) {
 		ArrayList<File> fileList = new ArrayList<File>();
-		File[] files = new File(dirName.toURI()).listFiles();
+		File[] files = new File(dirName).listFiles();
 
 		for (File file : files) {
 			if (file.isDirectory()) {
 				System.out.println("Directory: " + file.getName());
-				fileList = walkFileTreeExample(file.toURI().toURL()); // Calls same method again.
+				fileList = walkFileTreeExample(dirName+"/"+file.getName()); // Calls same method again.
 			} else {
 				fileList.add(file);
 			}

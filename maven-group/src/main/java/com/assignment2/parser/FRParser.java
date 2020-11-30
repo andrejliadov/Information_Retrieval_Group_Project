@@ -2,8 +2,6 @@ package com.assignment2.parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +45,7 @@ public class FRParser {
        CFRNO           The relevant section of the United States Code.
        RINDOCK         The docket or RIN number of the entry.
      */
+    public static final String FR_PATH = "Assignment Two/Assignment Two/fr94/";
     
     private static final String DOCNO = "docno";
     private static final String PARENT = "parent";
@@ -73,8 +72,8 @@ public class FRParser {
         return document;
     }
     
-    public List<Document> readDocuments(URL path) throws IOException, URISyntaxException {
-        final File dir = new File(path.toURI());
+    public List<Document> readDocuments() throws IOException {
+        final File dir = new File(FR_PATH);
         final List<Document> documentList = new ArrayList<Document>();
         
         File[] dirFiles = dir.listFiles();

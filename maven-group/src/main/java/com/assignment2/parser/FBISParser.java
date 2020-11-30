@@ -9,7 +9,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,15 +17,15 @@ import java.util.List;
  */
 public class FBISParser {
     // the path of fbis documents
-    // public static final String FBIS_PATH = "./Assignment Two/Assignment Two/fbis";
+    public static final String FBIS_PATH = "Assignment Two/Assignment Two/fbis";
 
     /**
      * get all the lucene documents from raw data
      */
-    public static List<Document> getDocuments(URL path) {
+    public static List<Document> getDocuments() {
         List<Document> documentList = new ArrayList<Document>();
         try {
-            File dir = new File(path.toURI());
+            File dir = new File(FBIS_PATH);
             File[] files = dir.listFiles();
             for (int i = 0; i < files.length; i++) {
                 List<Document> documents = parseSingleFBIS(files[i]);
