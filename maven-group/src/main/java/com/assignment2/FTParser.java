@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class FTParser {
 
-	private static final String ftDirectory = "./Assignment Two/Assignment Two/ft";
+    public static final String FT_PATH = "Assignment Two/Assignment Two/ft";
 	private static ArrayList<File> fileList;
 
 	//All of the different fields are stored here
@@ -23,9 +23,9 @@ public class FTParser {
 	public static ArrayList<String> Publications;
 	public static ArrayList<String> PageNumbers;
 	
-	FTParser(){
+	FTParser() {
 		System.out.println("Working Directory = " + System.getProperty("user.dir"));
-		fileList = walkFileTreeExample(ftDirectory);
+		fileList = walkFileTreeExample(FT_PATH);
 		
 		DocNums = new ArrayList<String>();
 		Dates = new ArrayList<String>();
@@ -57,7 +57,7 @@ public class FTParser {
 		for (File file : files) {
 			if (file.isDirectory()) {
 				System.out.println("Directory: " + file.getName());
-				fileList = walkFileTreeExample(ftDirectory+"/"+file.getName()); // Calls same method again.
+				fileList = walkFileTreeExample(dirName+"/"+file.getName()); // Calls same method again.
 			} else {
 				fileList.add(file);
 			}

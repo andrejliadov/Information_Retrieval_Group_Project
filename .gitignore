@@ -1,0 +1,5 @@
+maven-group/target/
+maven-group/.classpath
+maven-group/.project
+maven-group/.settings
+*.log
