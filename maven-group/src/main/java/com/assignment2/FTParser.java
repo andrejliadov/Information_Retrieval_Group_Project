@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class FTParser {
 
-    public static final String FT_PATH = "Assignment Two/Assignment Two/ft/";
+    public static final String FT_PATH = "Assignment Two/Assignment Two/ft";
 	private static ArrayList<File> fileList;
 
 	//All of the different fields are stored here
