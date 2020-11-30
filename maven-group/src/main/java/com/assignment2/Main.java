@@ -6,17 +6,11 @@ import com.assignment2.parser.FRParser;
 import org.apache.lucene.document.Document;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 public class Main {
     
-    public static URL getResource(String path) {
-        return Thread.currentThread().getContextClassLoader().getResource(path);
-    }
-    
-	public static void main(String[] args) throws IOException, URISyntaxException {
+	public static void main(String[] args) throws IOException {
         FTParser ftParser = new FTParser();
         ftParser.parseDocs();
         System.out.println("FT Parsing Done");
