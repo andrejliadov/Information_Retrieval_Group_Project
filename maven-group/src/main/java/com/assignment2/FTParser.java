@@ -1,19 +1,19 @@
 package com.assignment2;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class FTParser {
-	
-	private static final String ftDirectory = "../Assignment Two/Assignment Two/ft"; 
+
+	private static final String ftDirectory = "./Assignment Two/Assignment Two/ft";
 	private static ArrayList<File> fileList;
-	
+
 	//All of the different fields are stored here
 	public static ArrayList<String> DocNums;
 	public static ArrayList<String> Dates;
