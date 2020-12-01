@@ -3,7 +3,9 @@ package com.assignment2.parser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -18,7 +20,7 @@ public class LATParser
 {
     private static final String DATASET_FOLDER = "Assignment Two/Assignment Two/latimes";
 
-    public static void main( String[] args )
+    public List<Document> readDocuments()  throws IOException
     {
         File dataset = new File(DATASET_FOLDER);
         File[] datasetFiles = dataset.listFiles();
@@ -56,6 +58,8 @@ public class LATParser
                 }
             }
         }
+
+        return documents;
     }
 
     private static Document getElements(String article) {
