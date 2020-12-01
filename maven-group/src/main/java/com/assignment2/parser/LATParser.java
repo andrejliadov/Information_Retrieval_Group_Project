@@ -74,9 +74,9 @@ public class LATParser
 
         // Create Lucene document for article
         Document document = new Document();
-        document.add(new TextField("DOCNO", docNumber, Field.Store.YES));
-        document.add(new TextField("HEADLINE", headLine, Field.Store.YES));
-        document.add(new TextField("TEXT", contents, Field.Store.YES));
+        document.add(new TextField("docno", docNumber, Field.Store.YES));
+        document.add(new TextField("headline", headLine, Field.Store.YES));
+        document.add(new TextField("text", contents, Field.Store.YES));
 
         return document;
     }
