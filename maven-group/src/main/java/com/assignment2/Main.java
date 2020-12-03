@@ -1,14 +1,15 @@
 package com.assignment2;
 
 import com.assignment2.index.BuildIndex;
-import com.assignment2.parser.FBISParser;
-import com.assignment2.parser.FRParser;
-import com.assignment2.parser.FTParser;
-import com.assignment2.parser.LATParser;
+import com.assignment2.query.NumberedQuery;
+import com.assignment2.query.QueryReader;
+import com.assignment2.search.Search;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.jsoup.Jsoup;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.Similarity;
+import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,9 +17,12 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        // FTParser ftParser = new FTParser();
-        // ftParser.parseDocs();
-        // System.out.println("FT Parsing Done");
-        BuildIndex.startBuildIndex(new StandardAnalyzer());
+        Analyzer analyzer = new StandardAnalyzer();
+        Similarity similarityFunction = new BM25Similarity();
+        
+        Directory directory = BuildIndex.startBuildIndex(analyzer);
+        List<NumberedQuery> queries = QueryReader.readQueries(analyzer);
+        Search.search(directory, queries, similarityFunction);
+        directory.close();
 	}
 }

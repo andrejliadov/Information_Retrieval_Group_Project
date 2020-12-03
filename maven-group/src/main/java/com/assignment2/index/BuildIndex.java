@@ -19,21 +19,21 @@ import java.util.List;
 public class BuildIndex {
     public static final String INDEX_PATH = "index";
 
-    public static void startBuildIndex(Analyzer analyzer) {
+    public static Directory startBuildIndex(Analyzer analyzer) {
         if (analyzer == null) {
-            return;
+            return null;
         }
         System.out.println("------StartBuildIndex------");
         try {
             // init Directory
             String indexPath = analyzer.getClass().getSimpleName() + "_" + INDEX_PATH;
-
+            Directory directory = FSDirectory.open(Paths.get(indexPath));
+            
             if (new File(indexPath).exists()) {
                 System.out.println("------You already built the index------");
-                return;
+                return directory;
             }
 
-            Directory directory = FSDirectory.open(Paths.get(indexPath));
             // init IndexWriterConfig
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -46,7 +46,7 @@ public class BuildIndex {
 
             if (documentList == null || documentList.size() == 0) {
                 System.out.println("Fail to get documents");
-                return;
+                return null;
             }
             // write documents
             System.out.println("adding documents");
@@ -55,13 +55,14 @@ public class BuildIndex {
             }
             // close closeable objects
             indexWriter.close();
-            directory.close();
+            return directory;
         } catch (Exception e) {
             System.out.println("Fail to build com.task.lucene.index");
             e.printStackTrace();
         }
-
+        
         System.out.println("------EndBuildIndex------");
+        return null;
     }
 
     private static List<Document> getDocuments() {
