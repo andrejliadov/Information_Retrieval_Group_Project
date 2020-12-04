@@ -27,15 +27,8 @@ public class QueryReader {
     public static final String DESCRIPTION = "desc";
     public static final String NARRATIVE = "narr";
     
-    
     private static Query generateQuery(Analyzer analyzer, String title, String description, String narrative) {
-//        BooleanQuery.Builder query = new BooleanQuery.Builder();
-//        for(String termString : title.split(",")){
-//            for (String words : termString.trim().split(" ")) {
-//                Term term = new Term("text", words);
-//                query.add(new TermQuery(term), BooleanClause.Occur.MUST);
-//            }
-//        }
+        // TODO more complex query generation
         SimpleQueryParser parser = new SimpleQueryParser(analyzer, "text");
         return parser.parse(description.trim());
     }
