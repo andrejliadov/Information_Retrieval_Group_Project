@@ -15,7 +15,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 public class QueryReader {
@@ -29,15 +28,16 @@ public class QueryReader {
     public static final String NARRATIVE = "narr";
     
     
-    private static Query generateQuery(String title, String description, String narrative) {
-        BooleanQuery.Builder query = new BooleanQuery.Builder();
-        for(String termString : title.split(",")){
-            for (String words : termString.trim().split(" ")) {
-                Term term = new Term("text", words);
-                query.add(new TermQuery(term), BooleanClause.Occur.SHOULD);
-            }
-        }
-        return query.build();
+    private static Query generateQuery(Analyzer analyzer, String title, String description, String narrative) {
+//        BooleanQuery.Builder query = new BooleanQuery.Builder();
+//        for(String termString : title.split(",")){
+//            for (String words : termString.trim().split(" ")) {
+//                Term term = new Term("text", words);
+//                query.add(new TermQuery(term), BooleanClause.Occur.MUST);
+//            }
+//        }
+        SimpleQueryParser parser = new SimpleQueryParser(analyzer, "text");
+        return parser.parse(description.trim());
     }
     
     private static NumberedQuery parseQuery(Analyzer analyzer, Element element) {
@@ -65,7 +65,7 @@ public class QueryReader {
             .first().ownText()
             .replace("Narrative: ", "");
         
-        Query query = generateQuery(title, description, narrative);
+        Query query = generateQuery(analyzer, title, description, narrative);
         return new NumberedQuery(number, query);
     }
     

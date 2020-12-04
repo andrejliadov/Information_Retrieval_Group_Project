@@ -33,7 +33,7 @@ public class Search {
         resultLine.add( Integer.toString(rank) );               // rank
         resultLine.add( Float.toString(result.score) );         // score
         resultLine.add( "STANDARD\n" );                         // STANDARD
-        writer.write(resultLine.toString());
+        // writer.write(resultLine.toString());
     }
     
     public static void search(Directory directory, List<NumberedQuery> queryList, 
@@ -51,16 +51,15 @@ public class Search {
 
         for (NumberedQuery query : queryList) {
             
-            System.out.println(query.getQuery());
+            writer.write(query.getQuery().toString() + "\n");
             
             ScoreDoc[] hits = isearcher.search(query.getQuery(), MAX_RESULTS).scoreDocs;
-            System.out.println(hits.length);
             
             for (int i = 0; i < hits.length; i++) {
                 Document doc = isearcher.doc(hits[i].doc);
                 
                 if (i == 0) {
-                    System.out.println(doc.get("text") + "\n");
+                    writer.write(doc.get("text") + "\n\n");
                 }
                 
                 writeResultToFile(writer, query, hits[i], doc, i+1);

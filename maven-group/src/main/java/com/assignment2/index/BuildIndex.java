@@ -27,13 +27,14 @@ public class BuildIndex {
         try {
             // init Directory
             String indexPath = analyzer.getClass().getSimpleName() + "_" + INDEX_PATH;
+
+            if (new File(indexPath).exists()) {
+               System.out.println("------You already built the index------");
+               return FSDirectory.open(Paths.get(indexPath));
+            }
+            
             Directory directory = FSDirectory.open(Paths.get(indexPath));
             
-            if (new File(indexPath).exists()) {
-                System.out.println("------You already built the index------");
-                return directory;
-            }
-
             // init IndexWriterConfig
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
