@@ -11,6 +11,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.simple.SimpleQueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.jsoup.Jsoup;
@@ -19,18 +20,56 @@ import org.jsoup.select.Elements;
 
 public class QueryReader {
     
-    public static final String TOPIC_PATH = "topics";
+    private static final String TOPIC_PATH = "topics";
     
-    public static final String TOPIC = "top";
-    public static final String NUMBER = "num";
-    public static final String TITLE = "title";
-    public static final String DESCRIPTION = "desc";
-    public static final String NARRATIVE = "narr";
+    private static final String TOPIC = "top";
+    private static final String NUMBER = "num";
+    private static final String TITLE = "title";
+    private static final String DESCRIPTION = "desc";
+    private static final String NARRATIVE = "narr";
+    
+    private static final String QUERIED_FIELD = "text";
+    
+    private static final float TITLE_TERM_WEIGHT = 1.0f;
+    private static final float DESC_TERM_WEIGHT = 1.5f;
+    private static final float NARR_TERM_WEIGHT = 0.5f;
+    
+    private static String[] tokenise(String queryString) {
+        return queryString
+            .replace(",", "")
+            .replace(".", "")
+            .split(" ");
+    }
+    
+    private static Query parseTitle(String title) {
+        BooleanQuery.Builder bq = new BooleanQuery.Builder();
+        String[] terms = tokenise(title);
+        for (String termString : terms) {
+            Query termQuery = new TermQuery(new Term(QUERIED_FIELD, termString));
+            bq.add(new BoostQuery(termQuery, TITLE_TERM_WEIGHT), BooleanClause.Occur.SHOULD);
+        }
+        return bq.build();
+    }
+    
+    private static Query parseDescription(Analyzer analyzer, String description) {
+        SimpleQueryParser parser = new SimpleQueryParser(analyzer, QUERIED_FIELD);
+        Query parsedQuery = parser.parse(description.trim());
+        return new BoostQuery(parsedQuery, DESC_TERM_WEIGHT);
+    }
+    
+    private static Query parseNarrative(String narrative) {
+        return null;
+    }
     
     private static Query generateQuery(Analyzer analyzer, String title, String description, String narrative) {
-        // TODO more complex query generation
-        SimpleQueryParser parser = new SimpleQueryParser(analyzer, "text");
-        return parser.parse(description.trim());
+        Query titleQuery = parseTitle(title);
+        Query descQuery = parseDescription(analyzer, description);
+        // Query narrQuery = parseNarrative(narrative);
+        
+        BooleanQuery.Builder bq = new BooleanQuery.Builder();
+        bq.add(titleQuery, BooleanClause.Occur.SHOULD);
+        bq.add(descQuery, BooleanClause.Occur.SHOULD);
+        return bq.build();
     }
     
     private static NumberedQuery parseQuery(Analyzer analyzer, Element element) {

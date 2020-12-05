@@ -9,7 +9,6 @@ import java.util.StringJoiner;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
@@ -33,7 +32,7 @@ public class Search {
         resultLine.add( Integer.toString(rank) );               // rank
         resultLine.add( Float.toString(result.score) );         // score
         resultLine.add( "STANDARD\n" );                         // STANDARD
-        // writer.write(resultLine.toString());
+        writer.write(resultLine.toString());
     }
     
     public static void search(Directory directory, List<NumberedQuery> queryList, 
@@ -50,18 +49,13 @@ public class Search {
         FileWriter writer = new FileWriter(RESULTS_FILE);
 
         for (NumberedQuery query : queryList) {
-            
-            writer.write(query.getQuery().toString() + "\n");
-            
             ScoreDoc[] hits = isearcher.search(query.getQuery(), MAX_RESULTS).scoreDocs;
+            
+            System.out.print("Query no. " + query.getNumber());
+            System.out.println(" - Results: " + hits.length);
             
             for (int i = 0; i < hits.length; i++) {
                 Document doc = isearcher.doc(hits[i].doc);
-                
-                if (i == 0) {
-                    writer.write(doc.get("text") + "\n\n");
-                }
-                
                 writeResultToFile(writer, query, hits[i], doc, i+1);
             }
         }
