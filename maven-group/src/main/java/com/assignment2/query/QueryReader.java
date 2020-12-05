@@ -20,7 +20,7 @@ import org.jsoup.select.Elements;
 
 public class QueryReader {
     
-    private static final String TOPIC_PATH = "topics";
+    private static final String TOPIC_PATH = "../topics";
     
     private static final String TOPIC = "top";
     private static final String NUMBER = "num";

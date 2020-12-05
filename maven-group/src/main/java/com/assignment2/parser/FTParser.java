@@ -19,7 +19,7 @@ import org.jsoup.select.Elements;
 
 public class FTParser
 {
-    private static final String DATASET_FOLDER = "Assignment Two/Assignment Two/ft";
+    private static final String DATASET_FOLDER = "../Assignment Two/Assignment Two/ft";
 
     public List<Document> readDocuments() throws IOException
     {

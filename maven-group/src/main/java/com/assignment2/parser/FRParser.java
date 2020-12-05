@@ -45,7 +45,7 @@ public class FRParser {
        CFRNO           The relevant section of the United States Code.
        RINDOCK         The docket or RIN number of the entry.
      */
-    public static final String FR_PATH = "Assignment Two/Assignment Two/fr94/";
+    public static final String FR_PATH = "../Assignment Two/Assignment Two/fr94/";
     
     private static final String DOCNO = "docno";
     private static final String PARENT = "parent";

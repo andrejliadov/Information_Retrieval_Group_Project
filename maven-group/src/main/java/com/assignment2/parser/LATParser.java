@@ -19,7 +19,7 @@ import org.jsoup.select.Elements;
 
 public class LATParser
 {
-    private static final String DATASET_FOLDER = "Assignment Two/Assignment Two/latimes";
+    private static final String DATASET_FOLDER = "../Assignment Two/Assignment Two/latimes";
 
     public List<Document> readDocuments() throws IOException
     {
