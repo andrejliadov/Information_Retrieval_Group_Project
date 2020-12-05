@@ -14,7 +14,12 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class BuildIndex {
     public static final String INDEX_PATH = "index";
@@ -65,33 +70,65 @@ public class BuildIndex {
     }
 
     private static List<Document> getDocuments() {
-        List<Document> results = new ArrayList<>();
+        List<Document> results = Collections.synchronizedList(new ArrayList<>());
         try {
-            System.out.println("FT Parsing ....");
-            FTParser ftParser = new FTParser();
-            List<Document> ftDocs = ftParser.readDocuments();
-            System.out.println("FT size = " + ftDocs.size());
-            System.out.println("FT Parsing Done");
-            results.addAll(ftDocs);
+            CountDownLatch countDownLatch = new CountDownLatch(4);
+            ExecutorService executor = Executors.newFixedThreadPool(4);
+            executor.execute(() -> {
+                try {
+                    System.out.println(Thread.currentThread().getName() + "-FT Parsing ....");
+                    FTParser ftParser = new FTParser();
+                    List<Document> ftDocs = ftParser.readDocuments();
+                    System.out.println("FT size = " + ftDocs.size());
+                    System.out.println("FT Parsing Done");
+                    results.addAll(ftDocs);
+                    countDownLatch.countDown();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 
-            System.out.println("FBIS Parsing .... ");
-            List<Document> fbisDocs = FBISParser.getDocuments();
-            System.out.println("FBIS size = " + fbisDocs.size());
-            System.out.println("FBIS Parsing Done");
-            results.addAll(fbisDocs);
+            executor.execute(() -> {
+                try {
+                    System.out.println(Thread.currentThread().getName() + "-FBIS Parsing .... ");
+                    List<Document> fbisDocs = FBISParser.getDocuments();
+                    System.out.println("FBIS size = " + fbisDocs.size());
+                    System.out.println("FBIS Parsing Done");
+                    results.addAll(fbisDocs);
+                    countDownLatch.countDown();
 
-            System.out.println("FR Parsing ....");
-            FRParser frParser = new FRParser();
-            List<Document> frDocs = frParser.readDocuments();
-            System.out.println("FR size = " + frDocs.size());
-            System.out.println("FR Parsing Done");
-            results.addAll(frDocs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
 
-            System.out.println("LA Times parsing ....");
-            LATParser laTimes = new LATParser();
-            List<Document> laDocs = laTimes.readDocuments();
-            System.out.println("LA Times size = " + laDocs.size());
-            results.addAll(laDocs);
+            executor.execute(() -> {
+                try {
+                    System.out.println(Thread.currentThread().getName() + "-FR Parsing ....");
+                    FRParser frParser = new FRParser();
+                    List<Document> frDocs = frParser.readDocuments();
+                    System.out.println("FR size = " + frDocs.size());
+                    System.out.println("FR Parsing Done");
+                    results.addAll(frDocs);
+                    countDownLatch.countDown();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            executor.execute(() -> {
+                try {
+                    System.out.println(Thread.currentThread().getName() + "-LA Times parsing ....");
+                    LATParser laTimes = new LATParser();
+                    List<Document> laDocs = laTimes.readDocuments();
+                    System.out.println("LA Times size = " + laDocs.size());
+                    results.addAll(laDocs);
+                    countDownLatch.countDown();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            countDownLatch.await();
         } catch (Exception e) {
             e.printStackTrace();
         }
