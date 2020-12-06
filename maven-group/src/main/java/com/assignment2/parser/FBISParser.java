@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class FBISParser {
     // the path of fbis documents
-    public static final String FBIS_PATH = "../Assignment Two/Assignment Two/fbis";
+    public static final String FBIS_PATH = "Assignment Two/Assignment Two/fbis";
 
     /**
      * get all the lucene documents from raw data
