@@ -29,6 +29,7 @@ public class FBISParser {
             File[] files = dir.listFiles();
             for (int i = 0; i < files.length; i++) {
                 List<Document> documents = parseSingleFBIS(files[i]);
+                System.out.println(i);
                 if (documents != null) {
                     documentList.addAll(documents);
                 }

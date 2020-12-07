@@ -52,6 +52,7 @@ public class Search {
         for (NumberedQuery query : queryList) {
             
             writer.write(query.getQuery().toString() + "\n");
+            System.out.println(query.getQuery().toString());
             
             ScoreDoc[] hits = isearcher.search(query.getQuery(), MAX_RESULTS).scoreDocs;
             
@@ -60,6 +61,8 @@ public class Search {
                 
                 if (i == 0) {
                     writer.write(doc.get("text") + "\n\n");
+                    System.out.println("Number of hits: " + hits.length);
+                    System.out.println(doc.get("text") + "\n");
                 }
                 
                 writeResultToFile(writer, query, hits[i], doc, i+1);
