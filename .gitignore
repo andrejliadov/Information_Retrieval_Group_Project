@@ -3,3 +3,5 @@ maven-group/.classpath
 maven-group/.project
 maven-group/.settings
 *.log
+maven-group/qresults
+maven-group/*_index/
