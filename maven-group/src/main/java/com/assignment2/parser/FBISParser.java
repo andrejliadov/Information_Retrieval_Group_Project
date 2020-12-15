@@ -62,10 +62,8 @@ public class FBISParser {
                 String date = docTag.getElementsByTag("DATE1").text();
 
                 Document luceneDoc = new Document();
-                luceneDoc.add(new TextField("docno", docno, Field.Store.YES));
-                luceneDoc.add(new TextField("date", date, Field.Store.YES));
-                luceneDoc.add(new TextField("title", title, Field.Store.YES));
-                luceneDoc.add(new TextField("text", text, Field.Store.YES));
+                luceneDoc.add(new StringField("docno", docno, Field.Store.YES));
+                luceneDoc.add(new TextField("text", text + " " + date + " " + title, Field.Store.YES));
 
                 documentList.add(luceneDoc);
             }
