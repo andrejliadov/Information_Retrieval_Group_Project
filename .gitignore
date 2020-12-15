@@ -3,4 +3,9 @@ maven-group/.classpath
 maven-group/.project
 maven-group/.settings
 *.log
+<<<<<<< HEAD
 /.metadata/
+=======
+maven-group/qresults
+maven-group/*_index/
+>>>>>>> origin/queries

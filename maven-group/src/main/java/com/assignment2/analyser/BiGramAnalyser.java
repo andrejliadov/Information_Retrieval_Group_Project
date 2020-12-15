@@ -34,7 +34,7 @@ public class BiGramAnalyser extends Analyzer {
 	protected TokenStreamComponents createComponents(String fieldName) {
 		Pattern p = Pattern.compile("_");
 		final Tokenizer tokenizer = new StandardTokenizer();
-		final ShingleFilter shingleFilter = new ShingleFilter( new PorterStemFilter(new TrimFilter(new LowerCaseFilter(tokenizer))), 2 );
+		final ShingleFilter shingleFilter = new ShingleFilter( new PorterStemFilter(new TrimFilter(new LowerCaseFilter(new StopFilter(tokenizer, stopSet)))), 2 );
 		shingleFilter.setOutputUnigrams( true );
         return new TokenStreamComponents(tokenizer, shingleFilter);
 
