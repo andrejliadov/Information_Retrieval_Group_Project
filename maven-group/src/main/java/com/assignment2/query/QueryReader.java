@@ -126,9 +126,9 @@ public class QueryReader {
             if (narrativeQuery != null) {
                 booleanQuery.add(new BoostQuery(narrativeQuery, (float) 2.0), BooleanClause.Occur.SHOULD);
             }
-            if (irrNarrativeQuery != null) {
-                booleanQuery.add(new BoostQuery(irrNarrativeQuery, (float) 2.0), BooleanClause.Occur.FILTER);
-            }
+//            if (irrNarrativeQuery != null) {
+//                booleanQuery.add(new BoostQuery(irrNarrativeQuery, (float) 2.0), BooleanClause.Occur.FILTER);
+//            }
         }
 
 //        Query titleQuery = parseTitle(title);
