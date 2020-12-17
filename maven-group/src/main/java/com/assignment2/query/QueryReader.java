@@ -29,9 +29,9 @@ public class QueryReader {
 
     private static final String QUERIED_FIELD = "text";
 
-    private static final float TITLE_TERM_WEIGHT = 1.0f;
-    private static final float DESC_TERM_WEIGHT = 1.5f;
-    private static final float NARR_TERM_WEIGHT = 0.5f;
+    private static final float TITLE_TERM_WEIGHT = 6.0f;
+    private static final float DESC_TERM_WEIGHT = 4.0f;
+    private static final float NARR_TERM_WEIGHT = 2.0f;
 
     private static String[] tokenise(String queryString) {
         return queryString
@@ -93,9 +93,8 @@ public class QueryReader {
         return null;
     }
 
-    private static Query generateQuery(Analyzer analyzer, String title, String description, String narrative) throws ParseException {
-
-
+    private static Query generateQuery(Analyzer analyzer, String title, String description, String narrative) 
+            throws ParseException {
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 
         QueryParser queryParser = new QueryParser("text", analyzer);
@@ -106,6 +105,7 @@ public class QueryReader {
             Query descriptionQuery = queryParser.parse(QueryParser.escape(description));
             Query narrativeQuery = null;
             Query irrNarrativeQuery = null;
+            
             if (narrative != null && narrative.length() > 0) {
                 List<String> relevanceTexts = splitRelevance(narrative);
                 String relevantStr = relevanceTexts.get(0);
@@ -119,12 +119,11 @@ public class QueryReader {
                 }
             }
 
-
-            booleanQuery.add(new BoostQuery(titleQuery, (float) 6), BooleanClause.Occur.SHOULD);
-            booleanQuery.add(new BoostQuery(descriptionQuery, (float) 4.0), BooleanClause.Occur.SHOULD);
+            booleanQuery.add(new BoostQuery(titleQuery, TITLE_TERM_WEIGHT), BooleanClause.Occur.SHOULD);
+            booleanQuery.add(new BoostQuery(descriptionQuery, DESC_TERM_WEIGHT), BooleanClause.Occur.SHOULD);
 
             if (narrativeQuery != null) {
-                booleanQuery.add(new BoostQuery(narrativeQuery, (float) 2.0), BooleanClause.Occur.SHOULD);
+                booleanQuery.add(new BoostQuery(narrativeQuery, NARR_TERM_WEIGHT), BooleanClause.Occur.SHOULD);
             }
 //            if (irrNarrativeQuery != null) {
 //                booleanQuery.add(new BoostQuery(irrNarrativeQuery, (float) 2.0), BooleanClause.Occur.FILTER);
