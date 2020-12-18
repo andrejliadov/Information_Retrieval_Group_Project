@@ -16,12 +16,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
+import org.apache.lucene.morphology.LuceneMorphology;
+import org.apache.lucene.morphology.analyzer.MorphologyFilter;
+
 
 public class LATParser
 {
     private static final String DATASET_FOLDER = "Assignment Two/Assignment Two/latimes";
 
-    public List<Document> readDocuments() throws IOException
+    public List<Document> readDocuments(Analyzer analyzer) throws IOException
     {
         File dataset = new File(DATASET_FOLDER);
         File[] datasetFiles = dataset.listFiles();
@@ -42,11 +49,11 @@ public class LATParser
                     Elements docTags = jsoupDoc.getElementsByTag("DOC");
 
                     for (Element docTag : docTags) {
-                        Document doc = getElements(docTag);
+                        Document doc = getElements(analyzer, docTag);
                         documents.add(doc);
                     }
                 } catch (Exception e) {
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -54,7 +61,7 @@ public class LATParser
         return documents;
     }
 
-    private static Document getElements(org.jsoup.nodes.Element doc) {
+    private static Document getElements(Analyzer analyzer, org.jsoup.nodes.Element doc) {
         // Did not parse list: <LENGTH> <GRAPHIC>
 
         // These fields appear in every document
@@ -72,11 +79,13 @@ public class LATParser
         // Body of article has multiple <p> tags
         String contents = getArticleBody(doc, "TEXT");
 
+        String contents2 = applyMorphology(analyzer, contents);
+
         // Create Lucene document for article
         Document document = new Document();
         document.add(new TextField("docno", docNumber, Field.Store.YES));
         document.add(new TextField("headline", headLine, Field.Store.YES));
-        document.add(new TextField("text", contents, Field.Store.YES));
+        document.add(new TextField("text", contents2, Field.Store.YES));
 
         return document;
     }
@@ -101,5 +110,29 @@ public class LATParser
         String value = doc.select(tag + " P").text();
 
         return value;
+    }
+
+    private static String applyMorphology(Analyzer analyzer, String contents) {
+        try {
+            LuceneMorphology luceneMorph = new EnglishLuceneMorphology();
+
+            TokenStream tokenStream = analyzer.tokenStream("TEST", contents);
+            TokenStream new_contents = new MorphologyFilter(tokenStream, luceneMorph);
+
+            String result = "";
+
+            CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            while(tokenStream.incrementToken()) {
+               result = result + " " + attr.toString();
+            }
+
+            tokenStream.end();
+            tokenStream.close();
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

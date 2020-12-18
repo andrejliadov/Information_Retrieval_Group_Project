@@ -5,13 +5,25 @@
 	<groupId>com.assignment2</groupId>
 	<artifactId>maven-group</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-	
-	
+
+	<repositories>
+        <repository>
+            <id>bintray</id>
+            <url>https://dl.bintray.com/akuznetsov/russianmorphology</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
 	<dependencies>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
@@ -35,6 +47,12 @@
 			<version>8.7.0</version>
 		</dependency>
 
+		<dependency>
+		    <groupId>org.apache.lucene.morphology</groupId>
+		    <artifactId>english</artifactId>
+		    <version>1.1</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -43,7 +61,7 @@
 		</dependency>
 
 	</dependencies>
-	
+
 	<build>
 	<plugins>
 		<plugin>
@@ -81,7 +99,7 @@
 
 	</plugins>
 </build>
-	
+
 
 </project>
 

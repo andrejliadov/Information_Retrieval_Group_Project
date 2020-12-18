@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BuildIndex {
-    public static final String INDEX_PATH = "index";
+    public static final String INDEX_PATH = "index_morph_test";
 
     public static Directory startBuildIndex(Analyzer analyzer) {
         if (analyzer == null) {
@@ -32,9 +32,9 @@ public class BuildIndex {
                System.out.println("------You already built the index------");
                return FSDirectory.open(Paths.get(indexPath));
             }
-            
+
             Directory directory = FSDirectory.open(Paths.get(indexPath));
-            
+
             // init IndexWriterConfig
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -43,7 +43,7 @@ public class BuildIndex {
             IndexWriter indexWriter = new IndexWriter(directory, config);
 
             // get documents
-            List<Document> documentList = getDocuments();
+            List<Document> documentList = getDocuments(analyzer);
 
             if (documentList == null || documentList.size() == 0) {
                 System.out.println("Fail to get documents");
@@ -61,37 +61,37 @@ public class BuildIndex {
             System.out.println("Fail to build com.task.lucene.index");
             e.printStackTrace();
         }
-        
+
         System.out.println("------EndBuildIndex------");
         return null;
     }
 
-    private static List<Document> getDocuments() {
+    private static List<Document> getDocumentsOld(Analyzer analyzer) {
         List<Document> results = new ArrayList<>();
         try {
             System.out.println("FT Parsing ....");
             FTParser ftParser = new FTParser();
-            List<Document> ftDocs = ftParser.readDocuments();
+            List<Document> ftDocs = ftParser.readDocuments(analyzer);
             System.out.println("FT size = " + ftDocs.size());
             System.out.println("FT Parsing Done");
             results.addAll(ftDocs);
 
             System.out.println("FBIS Parsing .... ");
-            List<Document> fbisDocs = FBISParser.getDocuments();
+            List<Document> fbisDocs = FBISParser.getDocuments(analyzer);
             System.out.println("FBIS size = " + fbisDocs.size());
             System.out.println("FBIS Parsing Done");
             results.addAll(fbisDocs);
 
             System.out.println("FR Parsing ....");
             FRParser frParser = new FRParser();
-            List<Document> frDocs = frParser.readDocuments();
+            List<Document> frDocs = frParser.readDocuments(analyzer);
             System.out.println("FR size = " + frDocs.size());
             System.out.println("FR Parsing Done");
             results.addAll(frDocs);
 
             System.out.println("LA Times parsing ....");
             LATParser laTimes = new LATParser();
-            List<Document> laDocs = laTimes.readDocuments();
+            List<Document> laDocs = laTimes.readDocuments(analyzer);
             System.out.println("LA Times size = " + laDocs.size());
             results.addAll(laDocs);
         } catch (Exception e) {

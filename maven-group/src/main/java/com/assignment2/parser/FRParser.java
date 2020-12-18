@@ -14,6 +14,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
+import org.apache.lucene.morphology.LuceneMorphology;
+import org.apache.lucene.morphology.analyzer.MorphologyFilter;
+
 public class FRParser {
 
     /**
@@ -58,21 +65,24 @@ public class FRParser {
         return docElements;
     }
 
-    private Document processDocument(Element element) {
+    private Document processDocument(Analyzer analyzer, Element element) {
         Document document = new Document();
 
         String docNumber = element.getElementsByTag(DOCNO).text();
         String docParent = element.getElementsByTag(PARENT).text();
         String text = element.getElementsByTag(TEXT).text();
 
+        String text2 = applyMorphology(analyzer, text);
+
         document.add(new TextField(DOCNO, docNumber, Field.Store.YES));
         document.add(new TextField(PARENT, docParent, Field.Store.YES));
-        document.add(new TextField(TEXT, text, Field.Store.YES));
+        // document.add(new TextField(TEXT, text, Field.Store.YES));
+        document.add(new TextField(TEXT, text2, Field.Store.YES));
 
         return document;
     }
 
-    public List<Document> readDocuments() throws IOException {
+    public List<Document> readDocuments(Analyzer analyzer) throws IOException {
         final File dir = new File(FR_PATH);
         final List<Document> documentList = new ArrayList<Document>();
 
@@ -88,11 +98,35 @@ public class FRParser {
                 for (final File dataFile : subDirFiles) {
                     Elements docs = readDocumentsFromFile(dataFile);
                     docs.forEach(doc ->
-                        documentList.add(processDocument(doc))
+                        documentList.add(processDocument(analyzer, doc))
                     );
                 }
             }
         }
         return documentList;
+    }
+
+    private static String applyMorphology(Analyzer analyzer, String contents) {
+        try {
+            LuceneMorphology luceneMorph = new EnglishLuceneMorphology();
+
+            TokenStream tokenStream = analyzer.tokenStream("TEST", contents);
+            TokenStream new_contents = new MorphologyFilter(tokenStream, luceneMorph);
+
+            String result = "";
+
+            CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            while(tokenStream.incrementToken()) {
+               result = result + " " + attr.toString();
+            }
+
+            tokenStream.end();
+            tokenStream.close();
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
