@@ -68,14 +68,11 @@ public class FBISParser {
                 String docno = docTag.getElementsByTag("DOCNO").text();
                 String date = docTag.getElementsByTag("DATE1").text();
 
-                String content2 = applyMorphology(analyzer, text);
+                String text2 = applyMorphology(analyzer, text);
 
                 Document luceneDoc = new Document();
-                luceneDoc.add(new TextField("docno", docno, Field.Store.YES));
-                luceneDoc.add(new TextField("date", date, Field.Store.YES));
-                luceneDoc.add(new TextField("title", title, Field.Store.YES));
-                // luceneDoc.add(new TextField("text", text, Field.Store.YES));
-                luceneDoc.add(new TextField("text", content2, Field.Store.YES));
+                luceneDoc.add(new StringField("docno", docno, Field.Store.YES));
+                luceneDoc.add(new TextField("text", text2 + " " + date + " " + title, Field.Store.YES));
 
                 documentList.add(luceneDoc);
             }

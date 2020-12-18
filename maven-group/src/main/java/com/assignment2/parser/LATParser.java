@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
 import org.jsoup.Jsoup;
@@ -71,7 +72,7 @@ public class LATParser
         // These fields do not appear in every document
         // All have inner <p> tag (e.g. <TYPE><P>Wire</P></TYPE>)
         String headLine = getValue(doc, "HEADLINE");
-        // String byLine = getValue(doc, "BYLINE");
+        String byLine = getValue(doc, "BYLINE");
         // String type = getValue(doc, "TYPE");
         // String date = getValue(doc, "DATE");
         // String section = getValue(doc, "SECTION");
@@ -83,9 +84,9 @@ public class LATParser
 
         // Create Lucene document for article
         Document document = new Document();
-        document.add(new TextField("docno", docNumber, Field.Store.YES));
-        document.add(new TextField("headline", headLine, Field.Store.YES));
-        document.add(new TextField("text", contents2, Field.Store.YES));
+        document.add(new StringField("docno", docNumber, Field.Store.YES));
+        // document.add(new TextField("headline", headLine, Field.Store.YES));
+        document.add(new TextField("text", contents2 + " " +  headLine + " " + byLine, Field.Store.YES));
 
         return document;
     }

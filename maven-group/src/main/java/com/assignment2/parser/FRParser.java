@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -74,10 +75,8 @@ public class FRParser {
 
         String text2 = applyMorphology(analyzer, text);
 
-        document.add(new TextField(DOCNO, docNumber, Field.Store.YES));
-        document.add(new TextField(PARENT, docParent, Field.Store.YES));
-        // document.add(new TextField(TEXT, text, Field.Store.YES));
-        document.add(new TextField(TEXT, text2, Field.Store.YES));
+        document.add(new StringField(DOCNO, docNumber, Field.Store.YES));
+        document.add(new TextField(TEXT, text2 + " " + docParent, Field.Store.YES));
 
         return document;
     }
