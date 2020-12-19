@@ -18,7 +18,7 @@ import com.assignment2.query.NumberedQuery;
 public class Search {
 
     public static final String QUERY_FILE = "queries";
-    public static final String RESULTS_FILE = "qresults";
+    public static final String RESULTS_FILE = "qresults_morph_two";
     public static final int MAX_RESULTS = 1000;
 
     private static final String DOCNO = "docno";

@@ -24,7 +24,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Analyzer analyzer = new MyAnalyzer();
         Similarity similarityFunction = new BM25Similarity();
-        
+
         Directory directory = BuildIndex.startBuildIndex(analyzer);
         List<NumberedQuery> queries = QueryReader.readQueries(analyzer);
         Search.search(directory, queries, similarityFunction);

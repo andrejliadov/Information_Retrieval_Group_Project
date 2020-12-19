@@ -101,8 +101,13 @@ public class FBISParser {
             tokenStream.close();
 
             return result;
+
         } catch (Exception e) {
             e.printStackTrace();
+
+            return "";
         }
+
+
     }
 }

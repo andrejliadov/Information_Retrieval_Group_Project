@@ -134,6 +134,8 @@ public class LATParser
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+
+            return "";
         }
     }
 }
