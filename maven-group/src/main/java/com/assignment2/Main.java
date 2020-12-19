@@ -23,7 +23,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Analyzer analyzer = new MyAnalyzer();
-        Similarity similarityFunction = new BM25Similarity();
+        Float k = (float)0.75;
+        Float b = (float)0.70;
+        Similarity similarityFunction = new BM25Similarity(k, b);
 
         Directory directory = BuildIndex.startBuildIndex(analyzer);
         List<NumberedQuery> queries = QueryReader.readQueries(analyzer);
