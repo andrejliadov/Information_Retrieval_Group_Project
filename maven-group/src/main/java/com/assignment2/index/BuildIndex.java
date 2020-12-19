@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BuildIndex {
-    public static final String INDEX_PATH = "index_morph_test_two";
+    public static final String INDEX_PATH = "index_morph_test_three";
 
     public static Directory startBuildIndex(Analyzer analyzer) {
         if (analyzer == null) {

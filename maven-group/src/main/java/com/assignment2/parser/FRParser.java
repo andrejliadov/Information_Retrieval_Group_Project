@@ -73,10 +73,11 @@ public class FRParser {
         String docParent = element.getElementsByTag(PARENT).text();
         String text = element.getElementsByTag(TEXT).text();
 
-        String text2 = applyMorphology(analyzer, text);
+        // String text2 = applyMorphology(analyzer, text);
+        String text2 = applyMorphology(analyzer, text + " " + docParent);
 
         document.add(new StringField(DOCNO, docNumber, Field.Store.YES));
-        document.add(new TextField(TEXT, text2 + " " + docParent, Field.Store.YES));
+        document.add(new TextField(TEXT, text2, Field.Store.YES));
 
         return document;
     }

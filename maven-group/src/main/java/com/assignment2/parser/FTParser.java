@@ -82,12 +82,12 @@ public class FTParser
         // Body of article has multiple <p> tags
         String contents = getArticleBody(doc, "TEXT");
 
-        String content2 = applyMorphology(analyzer, contents);
+        String content2 = applyMorphology(analyzer, contents + " " + headLine);
 
         // Create Lucene document for article
         Document document = new Document();
         document.add(new StringField("docno", docNumber, Field.Store.YES));
-        document.add(new TextField("text", content2 + " " + headLine, Field.Store.YES));
+        document.add(new TextField("text", content2, Field.Store.YES));
 
         return document;
         } catch (Exception e) {

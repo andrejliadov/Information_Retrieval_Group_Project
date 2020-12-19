@@ -80,13 +80,13 @@ public class LATParser
         // Body of article has multiple <p> tags
         String contents = getArticleBody(doc, "TEXT");
 
-        String contents2 = applyMorphology(analyzer, contents);
+        String contents2 = applyMorphology(analyzer, contents + " " +  headLine + " " + byLine);
 
         // Create Lucene document for article
         Document document = new Document();
         document.add(new StringField("docno", docNumber, Field.Store.YES));
         // document.add(new TextField("headline", headLine, Field.Store.YES));
-        document.add(new TextField("text", contents2 + " " +  headLine + " " + byLine, Field.Store.YES));
+        document.add(new TextField("text", contents2, Field.Store.YES));
 
         return document;
     }
