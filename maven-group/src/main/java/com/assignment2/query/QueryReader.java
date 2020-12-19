@@ -119,9 +119,9 @@ public class QueryReader {
                 }
             }
 
-
-            booleanQuery.add(new BoostQuery(titleQuery, (float) 6), BooleanClause.Occur.SHOULD);
-            booleanQuery.add(new BoostQuery(descriptionQuery, (float) 4.0), BooleanClause.Occur.SHOULD);
+            // 0.3415
+            booleanQuery.add(new BoostQuery(titleQuery, (float) 7), BooleanClause.Occur.SHOULD);
+            booleanQuery.add(new BoostQuery(descriptionQuery, (float) 2.75), BooleanClause.Occur.MUST);
 
             if (narrativeQuery != null) {
                 booleanQuery.add(new BoostQuery(narrativeQuery, (float) 2.0), BooleanClause.Occur.SHOULD);
