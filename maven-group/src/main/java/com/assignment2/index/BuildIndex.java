@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BuildIndex {
-    public static final String INDEX_PATH = "index_morph_test_three";
+    public static final String INDEX_PATH = "index_morph";
 
     public static Directory startBuildIndex(Analyzer analyzer) {
         if (analyzer == null) {
@@ -160,6 +160,7 @@ public class BuildIndex {
                     LATParser laTimes = new LATParser();
                     List<Document> laDocs = laTimes.readDocuments(analyzer);
                     System.out.println("LA Times size = " + laDocs.size());
+                    System.out.println("LA Parsing Done");
                     results.addAll(laDocs);
                     countDownLatch.countDown();
                 } catch (Exception e) {

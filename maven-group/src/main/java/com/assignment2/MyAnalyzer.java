@@ -50,8 +50,7 @@ public class MyAnalyzer extends StopwordAnalyzerBase {
 //                | WordDelimiterGraphFilter.SPLIT_ON_NUMERICS
 //                | WordDelimiterGraphFilter.STEM_ENGLISH_POSSESSIVE, null);
 
-        tokenStream = new SnowballFilter(tokenStream,
-                new EnglishStemmer());
+        tokenStream = new SnowballFilter(tokenStream, new EnglishStemmer());
 
         tokenStream = new EnglishMinimalStemFilter(tokenStream);
         tokenStream = new PorterStemFilter(tokenStream);
