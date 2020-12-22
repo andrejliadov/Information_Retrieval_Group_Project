@@ -20,10 +20,15 @@ import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * class for building index from the document files
+ */
 public class BuildIndex {
+
+    // the path suffix of index
     public static final String INDEX_PATH = "index_morph";
+
 
     public static Directory startBuildIndex(Analyzer analyzer) {
         if (analyzer == null) {
@@ -72,44 +77,14 @@ public class BuildIndex {
         return null;
     }
 
-    private static List<Document> getDocumentsOld(Analyzer analyzer) {
-        List<Document> results = new ArrayList<>();
-        try {
-            System.out.println("FT Parsing ....");
-            FTParser ftParser = new FTParser();
-            List<Document> ftDocs = ftParser.readDocuments(analyzer);
-            System.out.println("FT size = " + ftDocs.size());
-            System.out.println("FT Parsing Done");
-            results.addAll(ftDocs);
-
-            System.out.println("FBIS Parsing .... ");
-            List<Document> fbisDocs = FBISParser.getDocuments(analyzer);
-            System.out.println("FBIS size = " + fbisDocs.size());
-            System.out.println("FBIS Parsing Done");
-            results.addAll(fbisDocs);
-
-            System.out.println("FR Parsing ....");
-            FRParser frParser = new FRParser();
-            List<Document> frDocs = frParser.readDocuments(analyzer);
-            System.out.println("FR size = " + frDocs.size());
-            System.out.println("FR Parsing Done");
-            results.addAll(frDocs);
-
-            System.out.println("LA Times parsing ....");
-            LATParser laTimes = new LATParser();
-            List<Document> laDocs = laTimes.readDocuments(analyzer);
-            System.out.println("LA Times size = " + laDocs.size());
-            System.out.println("LA Parsing Done");
-            results.addAll(laDocs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return results;
-    }
-
+    /**
+     * parsing the files and generate the Documents collection with specific Analyzer
+     */
     private static List<Document> getDocuments(Analyzer analyzer) {
         List<Document> results = Collections.synchronizedList(new ArrayList<>());
         try {
+
+            // use 4 threads to parse file
             CountDownLatch countDownLatch = new CountDownLatch(4);
             ExecutorService executor = Executors.newFixedThreadPool(4);
             executor.execute(() -> {

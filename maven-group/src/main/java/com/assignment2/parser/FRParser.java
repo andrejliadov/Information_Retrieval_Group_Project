@@ -22,6 +22,9 @@ import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.analyzer.MorphologyFilter;
 
+/**
+ * Parser class for parsing fr94 documents
+ */
 public class FRParser {
 
     /**
@@ -59,6 +62,9 @@ public class FRParser {
     private static final String PARENT = "parent";
     private static final String TEXT = "text";
 
+    /**
+     * Parsing the DOC Tag from file
+     */
     private Elements readDocumentsFromFile(File file) throws IOException {
         Elements docElements = Jsoup
             .parse(file, StandardCharsets.UTF_8.name())
@@ -66,6 +72,9 @@ public class FRParser {
         return docElements;
     }
 
+    /**
+     * Parsing the content of DOC
+     */
     private Document processDocument(Analyzer analyzer, Element element) {
         Document document = new Document();
 
@@ -82,6 +91,9 @@ public class FRParser {
         return document;
     }
 
+    /**
+     * read documents for file path
+     */
     public List<Document> readDocuments(Analyzer analyzer) throws IOException {
         final File dir = new File(FR_PATH);
         final List<Document> documentList = new ArrayList<Document>();

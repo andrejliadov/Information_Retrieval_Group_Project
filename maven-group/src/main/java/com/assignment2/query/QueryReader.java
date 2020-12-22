@@ -17,6 +17,9 @@ import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The class for parsing topic file and generate queries
+ */
 public class QueryReader {
 
     private static final String TOPIC_PATH = "topics";
@@ -41,6 +44,9 @@ public class QueryReader {
     }
 
 
+    /**
+     * get the relevant content and irrelevant content from narrative
+     */
     private static List<String> splitRelevance(String narrative) {
 
         List<String> result = new ArrayList<>();
@@ -58,13 +64,6 @@ public class QueryReader {
             } else {
                 relevantStr.append(sentence.replaceAll("a relevant document|relevant|will contain|will discuss|Discussions of|include|mentioning|must cite|etc.", " "));
             }
-//           if (!sentence.contains("") && !sentence.contains("irrelevant")) {
-//                relevantNarr.append(sentence.replaceAll(
-//                        "a relevant document identifies|a relevant document could|a relevant document may|a relevant document must|a relevant document will|a document will|to be relevant|relevant documents|a document must|relevant|will contain|will discuss|will provide|must cite",
-//                        ""));
-//            } else {
-//
-//            }
             index = bi.current();
         }
         result.add(relevantStr.toString());
@@ -73,26 +72,9 @@ public class QueryReader {
     }
 
 
-    private static Query parseTitle(String title) {
-        BooleanQuery.Builder bq = new BooleanQuery.Builder();
-        String[] terms = tokenise(title);
-        for (String termString : terms) {
-            Query termQuery = new TermQuery(new Term(QUERIED_FIELD, termString));
-            bq.add(new BoostQuery(termQuery, TITLE_TERM_WEIGHT), BooleanClause.Occur.SHOULD);
-        }
-        return bq.build();
-    }
-
-    private static Query parseDescription(Analyzer analyzer, String description) {
-        SimpleQueryParser parser = new SimpleQueryParser(analyzer, QUERIED_FIELD);
-        Query parsedQuery = parser.parse(description.trim());
-        return new BoostQuery(parsedQuery, DESC_TERM_WEIGHT);
-    }
-
-    private static Query parseNarrative(String narrative) {
-        return null;
-    }
-
+    /**
+     * generate query
+     */
     private static Query generateQuery(Analyzer analyzer, String title, String description, String narrative) throws ParseException {
 
 
@@ -131,16 +113,12 @@ public class QueryReader {
 //            }
         }
 
-//        Query titleQuery = parseTitle(title);
-//        Query descQuery = parseDescription(analyzer, description);
-//        // Query narrQuery = parseNarrative(narrative);
-//
-//        BooleanQuery.Builder bq = new BooleanQuery.Builder();
-//        bq.add(titleQuery, BooleanClause.Occur.SHOULD);
-//        bq.add(descQuery, BooleanClause.Occur.SHOULD);
         return booleanQuery.build();
     }
 
+    /**
+     * parse query file and get the query number, title, desc, narr
+     */
     private static NumberedQuery parseQuery(Analyzer analyzer, Element element) throws ParseException {
         // query number
         int number = Integer.parseInt(
@@ -170,6 +148,9 @@ public class QueryReader {
         return new NumberedQuery(number, query);
     }
 
+    /**
+     * read topic file
+     */
     public static List<NumberedQuery> readQueries(Analyzer analyzer) throws IOException {
         List<NumberedQuery> queryList = new ArrayList<NumberedQuery>();
 

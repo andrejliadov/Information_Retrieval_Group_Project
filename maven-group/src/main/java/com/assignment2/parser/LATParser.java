@@ -24,7 +24,9 @@ import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.analyzer.MorphologyFilter;
 
-
+/**
+ * Parser class for parsing latimes files
+ */
 public class LATParser
 {
     private static final String DATASET_FOLDER = "Assignment Two/Assignment Two/latimes";
@@ -62,6 +64,9 @@ public class LATParser
         return documents;
     }
 
+    /**
+     * get the elements of DOC
+     */
     private static Document getElements(Analyzer analyzer, org.jsoup.nodes.Element doc) {
         // Did not parse list: <LENGTH> <GRAPHIC>
 
@@ -91,6 +96,9 @@ public class LATParser
         return document;
     }
 
+    /**
+     * get the content of specific tag
+     */
     private static String getValue(Element doc, String tag) {
         Elements element = doc.select(tag);
 
@@ -100,19 +108,22 @@ public class LATParser
             return "";
         }
 
-        String value = doc.select(tag).select("P").first().ownText();
-
-        return value;
+        return doc.select(tag).select("P").first().ownText();
     }
 
+    /**
+     * get the body content of specific tag
+     */
     private static String getArticleBody(Element doc, String tag) {
         // Get article contents - made up of multiple <P> tags
         // Concat tag content without tags
-        String value = doc.select(tag + " P").text();
 
-        return value;
+        return doc.select(tag + " P").text();
     }
 
+    /**
+     * apply EnglishLuceneMorphology
+     */
     private static String applyMorphology(Analyzer analyzer, String contents) {
         try {
             LuceneMorphology luceneMorph = new EnglishLuceneMorphology();
