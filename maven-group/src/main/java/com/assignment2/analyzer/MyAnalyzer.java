@@ -1,4 +1,4 @@
-package com.assignment2;
+package com.assignment2.analyzer;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.core.FlattenGraphFilter;
@@ -21,9 +21,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+/**
+ * customized analyzer
+ */
 public class MyAnalyzer extends StopwordAnalyzerBase {
 
-    private static final String stop_file_path = "stopwords/stopwords2.txt";
+    // stop words from nltk
+    private static final String stop_file_path = "stopwords/nltk_stopwords.txt";
 
     public MyAnalyzer() throws IOException {
         super(StopwordAnalyzerBase.loadStopwordSet(Paths.get(stop_file_path)));
@@ -33,40 +37,30 @@ public class MyAnalyzer extends StopwordAnalyzerBase {
 
 //        Tokenizer stdTokenizer = new ClassicTokenizer();
         Tokenizer stdTokenizer = new StandardTokenizer();
-//        TokenStream tokenStream = new ClassicFilter(stdTokenizer);
-//        tokenStream = new ASCIIFoldingFilter(tokenStream);
         TokenStream tokenStream = new EnglishPossessiveFilter(stdTokenizer);
         tokenStream = new LowerCaseFilter(tokenStream);
         tokenStream = new StopFilter(tokenStream, stopwords);
-//        tokenStream = new FlattenGraphFilter(
-//                new SynonymGraphFilter(tokenStream, "",
-//                        true));
-//
-//
 
-//        tokenStream = new WordDelimiterGraphFilter(tokenStream,WordDelimiterGraphFilter.GENERATE_WORD_PARTS
+        tokenStream = new SnowballFilter(tokenStream, new EnglishStemmer());
+        tokenStream = new PorterStemFilter(tokenStream);
+
+
+//         we also tried some other filters
+//         FlattenGraphFilter
+//
+//         tokenStream = new WordDelimiterGraphFilter(tokenStream,WordDelimiterGraphFilter.GENERATE_WORD_PARTS
 //                | WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS
 //                | WordDelimiterGraphFilter.SPLIT_ON_CASE_CHANGE
 //                | WordDelimiterGraphFilter.SPLIT_ON_NUMERICS
 //                | WordDelimiterGraphFilter.STEM_ENGLISH_POSSESSIVE, null);
-
-        tokenStream = new SnowballFilter(tokenStream, new EnglishStemmer());
-
-        tokenStream = new EnglishMinimalStemFilter(tokenStream);
-        tokenStream = new PorterStemFilter(tokenStream);
-
-        // ElisionFilter
-
-        //CapitalizationFilter
-
-        // TrimFilter Trims leading and trailing whitespace from Tokens in the stream.
-
-        // LengthFilter Removes words that are too long or too short from the stream.
-
-        // KStemFilter A high-performance kstem filter for english.
-
-        // SetKeywordMarkerFilter
-
+//         ASCIIFoldingFilter(tokenStream);
+//         ElisionFilter
+//         EnglishMinimalStemFilter(tokenStream);
+//         CapitalizationFilter
+//         TrimFilter Trims leading and trailing whitespace from Tokens in the stream.
+//         LengthFilter Removes words that are too long or too short from the stream.
+//         KStemFilter A high-performance kstem filter for english.
+//         SetKeywordMarkerFilter
 
         return new TokenStreamComponents(stdTokenizer, tokenStream);
     }

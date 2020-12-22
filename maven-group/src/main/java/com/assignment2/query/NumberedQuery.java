@@ -2,6 +2,9 @@ package com.assignment2.query;
 
 import org.apache.lucene.search.Query;
 
+/**
+ * The wrapper class of Query with query number
+ */
 public class NumberedQuery {
 
     private int number;

@@ -84,6 +84,10 @@ public class FBISParser {
         return documentList;
     }
 
+
+    /**
+     * apply EnglishLuceneMorphology
+     */
     private static String applyMorphology(Analyzer analyzer, String contents) {
         try {
             LuceneMorphology luceneMorph = new EnglishLuceneMorphology();
@@ -109,7 +113,5 @@ public class FBISParser {
 
             return "";
         }
-
-
     }
 }

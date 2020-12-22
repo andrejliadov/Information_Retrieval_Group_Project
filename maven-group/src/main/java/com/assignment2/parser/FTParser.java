@@ -24,6 +24,9 @@ import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.analyzer.MorphologyFilter;
 
+/**
+ * Parser class for parsing ft files
+ */
 public class FTParser
 {
     private static final String DATASET_FOLDER = "Assignment Two/Assignment Two/ft";
@@ -71,6 +74,9 @@ public class FTParser
         return documents;
     }
 
+    /**
+     * get the elements in DOC
+     */
     private static Document getElements(Analyzer analyzer, org.jsoup.nodes.Element doc) {
         try {
         // These fields appear in every document
@@ -98,6 +104,9 @@ public class FTParser
 
     }
 
+    /**
+     * apply EnglishLuceneMorphology
+     */
     private static String applyMorphology(Analyzer analyzer, String contents) {
         try {
             LuceneMorphology luceneMorph = new EnglishLuceneMorphology();
@@ -124,6 +133,9 @@ public class FTParser
         }
     }
 
+    /**
+     * get the content of specific tag
+     */
     private static String getValue(Element doc, String tag) {
         Elements element = doc.select(tag);
 
@@ -133,16 +145,12 @@ public class FTParser
             return "";
         }
 
-        String value = doc.select(tag).first().ownText();
-
-        return value;
+        return doc.select(tag).first().ownText();
     }
 
     private static String getArticleBody(Element doc, String tag) {
         // Get article contents - made up of multiple <P> tags
         // Concat tag content without tags
-        String value = doc.select(tag).text();
-
-        return value;
+        return doc.select(tag).text();
     }
 }

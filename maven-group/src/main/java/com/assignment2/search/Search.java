@@ -15,6 +15,9 @@ import org.apache.lucene.store.Directory;
 
 import com.assignment2.query.NumberedQuery;
 
+/**
+ * class for searching and generating result file
+ */
 public class Search {
 
     public static final String QUERY_FILE = "queries";
