@@ -9,23 +9,34 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.morphology.english.EnglishLuceneMorphology;
+import org.apache.lucene.morphology.LuceneMorphology;
+import org.apache.lucene.morphology.analyzer.MorphologyFilter;
+
+/**
+ * Parser class for parsing fr94 documents
+ */
 public class FRParser {
-    
+
     /**
      * DOCS ARE HIERARCHICAL
      * Every document contains: document no., document parent, text
-     * 
+     *
      * the following tags can be present 0 or more times within the text field:
-     * 
-     * USDEPT          The name of the department within the federal government 
+     *
+     * USDEPT          The name of the department within the federal government
                            that released the document.
        AGENCY          The name of the government agency within the department.
-       USBUREAU        The name of the government service or bureau contributing 
+       USBUREAU        The name of the government service or bureau contributing
                            the document.
        DOCTITLE        The title text of the contribution.
        ADDRESS         The address(es) of the contributing agency.
@@ -46,53 +57,90 @@ public class FRParser {
        RINDOCK         The docket or RIN number of the entry.
      */
     public static final String FR_PATH = "Assignment Two/Assignment Two/fr94/";
-    
+
     private static final String DOCNO = "docno";
     private static final String PARENT = "parent";
     private static final String TEXT = "text";
-    
+
+    /**
+     * Parsing the DOC Tag from file
+     */
     private Elements readDocumentsFromFile(File file) throws IOException {
         Elements docElements = Jsoup
             .parse(file, StandardCharsets.UTF_8.name())
             .getElementsByTag("DOC");
         return docElements;
     }
-    
-    private Document processDocument(Element element) {
+
+    /**
+     * Parsing the content of DOC
+     */
+    private Document processDocument(Analyzer analyzer, Element element) {
         Document document = new Document();
-        
+
         String docNumber = element.getElementsByTag(DOCNO).text();
         String docParent = element.getElementsByTag(PARENT).text();
         String text = element.getElementsByTag(TEXT).text();
-        
-        document.add(new TextField(DOCNO, docNumber, Field.Store.YES));
-        document.add(new TextField(PARENT, docParent, Field.Store.YES));
-        document.add(new TextField(TEXT, text, Field.Store.YES));
-        
+
+        // String text2 = applyMorphology(analyzer, text);
+        String text2 = applyMorphology(analyzer, text + " " + docParent);
+
+        document.add(new StringField(DOCNO, docNumber, Field.Store.YES));
+        document.add(new TextField(TEXT, text2, Field.Store.YES));
+
         return document;
     }
-    
-    public List<Document> readDocuments() throws IOException {
+
+    /**
+     * read documents for file path
+     */
+    public List<Document> readDocuments(Analyzer analyzer) throws IOException {
         final File dir = new File(FR_PATH);
         final List<Document> documentList = new ArrayList<Document>();
-        
+
         File[] dirFiles = dir.listFiles();
         Arrays.sort(dirFiles);
-        
+
         for (final File subDir : dirFiles) {
-            
+
             if (subDir.isDirectory()) {
                 File[] subDirFiles = subDir.listFiles();
                 Arrays.sort(subDirFiles);
-                
+
                 for (final File dataFile : subDirFiles) {
                     Elements docs = readDocumentsFromFile(dataFile);
-                    docs.forEach(doc -> 
-                        documentList.add(processDocument(doc))
+                    docs.forEach(doc ->
+                        documentList.add(processDocument(analyzer, doc))
                     );
                 }
             }
         }
         return documentList;
+    }
+
+    private static String applyMorphology(Analyzer analyzer, String contents) {
+        try {
+            LuceneMorphology luceneMorph = new EnglishLuceneMorphology();
+
+            TokenStream tokenStream = analyzer.tokenStream("TEST", contents);
+            TokenStream new_contents = new MorphologyFilter(tokenStream, luceneMorph);
+
+            String result = "";
+
+            CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            while(tokenStream.incrementToken()) {
+               result = result + " " + attr.toString();
+            }
+
+            tokenStream.end();
+            tokenStream.close();
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return "";
+        }
     }
 }
