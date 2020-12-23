@@ -14,19 +14,25 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * class for building index from the document files
+ */
 public class BuildIndex {
-    public static final String INDEX_PATH = "index";
 
-    public static void startBuildIndex(Analyzer analyzer) {
+    // the path suffix of index
+    public static final String INDEX_PATH = "index_morph";
+
+
+    public static Directory startBuildIndex(Analyzer analyzer) {
         if (analyzer == null) {
-            return;
+            return null;
         }
         System.out.println("------StartBuildIndex------");
         try {
@@ -34,11 +40,12 @@ public class BuildIndex {
             String indexPath = analyzer.getClass().getSimpleName() + "_" + INDEX_PATH;
 
             if (new File(indexPath).exists()) {
-                System.out.println("------You already built the index------");
-                return;
+               System.out.println("------You already built the index------");
+               return FSDirectory.open(Paths.get(indexPath));
             }
 
             Directory directory = FSDirectory.open(Paths.get(indexPath));
+
             // init IndexWriterConfig
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -47,11 +54,11 @@ public class BuildIndex {
             IndexWriter indexWriter = new IndexWriter(directory, config);
 
             // get documents
-            List<Document> documentList = getDocuments();
+            List<Document> documentList = getDocuments(analyzer);
 
             if (documentList == null || documentList.size() == 0) {
                 System.out.println("Fail to get documents");
-                return;
+                return null;
             }
             // write documents
             System.out.println("adding documents");
@@ -60,25 +67,31 @@ public class BuildIndex {
             }
             // close closeable objects
             indexWriter.close();
-            directory.close();
+            return directory;
         } catch (Exception e) {
             System.out.println("Fail to build com.task.lucene.index");
             e.printStackTrace();
         }
 
         System.out.println("------EndBuildIndex------");
+        return null;
     }
 
-    private static List<Document> getDocuments() {
+    /**
+     * parsing the files and generate the Documents collection with specific Analyzer
+     */
+    private static List<Document> getDocuments(Analyzer analyzer) {
         List<Document> results = Collections.synchronizedList(new ArrayList<>());
         try {
+
+            // use 4 threads to parse file
             CountDownLatch countDownLatch = new CountDownLatch(4);
             ExecutorService executor = Executors.newFixedThreadPool(4);
             executor.execute(() -> {
                 try {
                     System.out.println(Thread.currentThread().getName() + "-FT Parsing ....");
                     FTParser ftParser = new FTParser();
-                    List<Document> ftDocs = ftParser.readDocuments();
+                    List<Document> ftDocs = ftParser.readDocuments(analyzer);
                     System.out.println("FT size = " + ftDocs.size());
                     System.out.println("FT Parsing Done");
                     results.addAll(ftDocs);
@@ -91,7 +104,7 @@ public class BuildIndex {
             executor.execute(() -> {
                 try {
                     System.out.println(Thread.currentThread().getName() + "-FBIS Parsing .... ");
-                    List<Document> fbisDocs = FBISParser.getDocuments();
+                    List<Document> fbisDocs = FBISParser.getDocuments(analyzer);
                     System.out.println("FBIS size = " + fbisDocs.size());
                     System.out.println("FBIS Parsing Done");
                     results.addAll(fbisDocs);
@@ -106,7 +119,7 @@ public class BuildIndex {
                 try {
                     System.out.println(Thread.currentThread().getName() + "-FR Parsing ....");
                     FRParser frParser = new FRParser();
-                    List<Document> frDocs = frParser.readDocuments();
+                    List<Document> frDocs = frParser.readDocuments(analyzer);
                     System.out.println("FR size = " + frDocs.size());
                     System.out.println("FR Parsing Done");
                     results.addAll(frDocs);
@@ -120,8 +133,9 @@ public class BuildIndex {
                 try {
                     System.out.println(Thread.currentThread().getName() + "-LA Times parsing ....");
                     LATParser laTimes = new LATParser();
-                    List<Document> laDocs = laTimes.readDocuments();
+                    List<Document> laDocs = laTimes.readDocuments(analyzer);
                     System.out.println("LA Times size = " + laDocs.size());
+                    System.out.println("LA Parsing Done");
                     results.addAll(laDocs);
                     countDownLatch.countDown();
                 } catch (Exception e) {
